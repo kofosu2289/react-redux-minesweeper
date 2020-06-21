@@ -16,6 +16,8 @@ const GameBoard: React.FC = () => {
         height: 10,
         mines: 10,
     });
+  
+  console.log(setGameDetails);
 
     const { width, height, mines } = gameDetails;
     const [gameBoardState, setGameBoardState] = useState<Cell[][]>(createGameBoardState(width, height, mines));
