@@ -14,15 +14,17 @@ type GameBoardState = {
     height: number,
     width: number,
     mines: number,
+    unflaggedMines: number,
     cells: Cell[][],
     headerText: string,
 }
 
 const initialgameBoardState = {
-    gameState: GameState.Playing,
+    gameState: GameState.Start,
     height: 10,
     width: 10,
     mines: 10,
+    unflaggedMines: 10,
     cells: createGameBoardState(10, 10, 10),
     headerText: "Minesweeper",
 }
@@ -34,8 +36,9 @@ const gameBoardReducer = (state: GameBoardState = initialgameBoardState, action:
             return {
                 ...state,
                 cells: createGameBoardState(state.width, state.height, state.mines),
-                gameState: GameState.Playing,
+                gameState: GameState.Start,
                 headerText: "Minesweeper",
+                unflaggedMines: state.mines,
             }
 
         case 'SET_GAME_STATE':
@@ -64,8 +67,13 @@ const gameBoardReducer = (state: GameBoardState = initialgameBoardState, action:
         case 'LEFT_CLICK_CELL': {
             let tempCells = _.cloneDeep(state.cells);
             let tempCell = tempCells[action.payload.x][action.payload.y];
+            let tempGameState = state.gameState;
 
-            if(!tempCell.isFlagged && state.gameState === GameState.Playing) {
+            if(tempGameState === GameState.Start) {
+                tempGameState = GameState.Playing;
+            }
+
+            if(!tempCell.isFlagged && tempGameState === GameState.Playing) {
         
                 tempCell.isVisible = true;
 
@@ -94,18 +102,34 @@ const gameBoardReducer = (state: GameBoardState = initialgameBoardState, action:
             return {
                 ...state,
                 cells: tempCells,
+                gameState: tempGameState,
             }
         }
 
         case 'RIGHT_CLICK_CELL': {
             let tempCells = _.cloneDeep(state.cells);
             let tempCell = tempCells[action.payload.x][action.payload.y]
-            if(state.gameState === GameState.Playing) {
-                tempCell.isFlagged = !tempCell.isFlagged;
+            let tempGameState = state.gameState;
+            let tempUnflaggedMines = state.unflaggedMines;
+
+            if(tempGameState === GameState.Start) {
+                tempGameState = GameState.Playing;
+            }
+
+            if(tempGameState === GameState.Playing) {
+                if(tempCell.isFlagged) {
+                    tempCell.isFlagged = false;
+                    tempUnflaggedMines++;
+                } else {
+                    tempCell.isFlagged = true;
+                    tempUnflaggedMines--;
+                }
             }
             return {
                 ...state,
                 cells: tempCells,
+                gameState: tempGameState,
+                unflaggedMines: tempUnflaggedMines,
             }
         }
 
