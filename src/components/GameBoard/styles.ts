@@ -19,6 +19,10 @@ const GameBoard = styled.div(({width, height, theme}: GameBoardProps) => css`
     width: ${width * cellWidth}px;
     height: ${height * cellWidth}px;
     margin: 0 auto;  
+
+    &:hover {
+        cursor: pointer;
+    }
 `);
 
 type CellSquareProps = {
@@ -73,6 +77,11 @@ const Button = styled.button(({ theme }: ButtonProps) => css`
     background: ${theme.grey};
     box-shadow: inset 1px 1px 1px ${theme.light}, inset -1px -1px 0px ${theme.dark};
     color: ${theme.primary};
+    user-select: none;
+
+    &:hover {
+        cursor: pointer;
+    }
 
     &:focus {
         outline: none;
@@ -97,6 +106,7 @@ const Container = styled.div(({ theme }: ContainerProps) => css`
     padding: 20px;
     box-shadow: inset 1px 1px 1px ${theme.light}, inset -1px -1px 0px ${theme.dark};
     border: 2px solid ${theme.primary};
+    user-select: none;
 
     h1 {
         color: ${theme.warn};

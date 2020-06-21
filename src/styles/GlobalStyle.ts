@@ -22,5 +22,6 @@ export default createGlobalStyle`
         text-align: center;
         color: ${theme.warn};
         margin-top: 20px;
+        user-select: none;
     }
 `;
