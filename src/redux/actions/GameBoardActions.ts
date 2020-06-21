@@ -1,9 +1,21 @@
+import { GameState } from "../reducers/gameBoardReducer";
+import { Cell } from "../../utils";
+
 interface ICreateNewGameBoardAction {
-  type: "CREATE_NEW_GAME_BOARD",
-  height: number,
-  width: number,
-  mines: number,
+    readonly type: "CREATE_NEW_GAME_BOARD",
+}
+
+interface ISetGameStateAction {
+    readonly type: "SET_GAME_STATE",
+    payload: GameState
+}
+
+interface ISetGameBoardStateAction {
+    readonly type: "SET_GAME_BOARD_STATE",
+    payload: Cell[][];
 }
 
 export type GameBoardActions =
 | ICreateNewGameBoardAction
+| ISetGameStateAction
+| ISetGameBoardStateAction

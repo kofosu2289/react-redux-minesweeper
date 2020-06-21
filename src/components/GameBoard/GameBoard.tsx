@@ -1,32 +1,22 @@
-import React, { useState, useCallback, Dispatch } from 'react'
+import React, { useCallback, Dispatch } from 'react'
 import { Styled } from './styles';
 import CellSquare from './CellSquare';
 import ControlsBar from './ControlsBar';
-import { Cell, createGameBoardState, showNeighbors, isWinConditionMet, revealGameBoard } from '../../utils';
+import { Cell, showNeighbors, isWinConditionMet, revealGameBoard } from '../../utils';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { UIActions } from '../../redux/actions/UIActions';
 import { AppState } from '../../redux/reducers/rootReducer';
-
-enum GameState {
-    Start,
-    Win,
-    Lose,
-    Playing
-}
+import { GameBoardActions } from '../../redux/actions/GameBoardActions';
+import { GameState } from '../../redux/reducers/gameBoardReducer';
 
 const GameBoard: React.FC = () => {
-    const { width, height, mines } = useSelector((state: AppState) => state.gameBoard)
-
-    const [gameBoardState, setGameBoardState] = useState<Cell[][]>(createGameBoardState(width, height, mines));
-    const [gameState, setGameState] = useState<GameState>(GameState.Playing);
-    const UIDispatch = useDispatch<Dispatch<UIActions>>();
+    const { width, height, gameState, cells: gameBoardState, headerText } = useSelector((state: AppState) => state.gameBoard)
+    const gameBoardDispatch = useDispatch<Dispatch<GameBoardActions>>();
 
     const handleClickCellSquare = useCallback((e: React.MouseEvent<HTMLDivElement>, cell: Cell) => {
         e.preventDefault();
-        UIDispatch({ type: 'TEST', payload: 'it works!'})
         if(gameState === GameState.Playing) {
-            let tempGameBoardState = _.cloneDeep(gameBoardState);
+            let tempGameBoardState: Cell[][] = _.cloneDeep(gameBoardState);
             let tempCell: Cell = tempGameBoardState[cell.x][cell.y];
 
             // handle left click
@@ -36,13 +26,13 @@ const GameBoard: React.FC = () => {
 
                 if(tempCell.hasMine) {
                     revealGameBoard(tempGameBoardState);
-                    setGameState(GameState.Lose);
+                    gameBoardDispatch({type: 'SET_GAME_STATE', payload: GameState.Lose})
                 } 
                 else {
                     showNeighbors(tempGameBoardState, cell); 
 
                     if(isWinConditionMet(tempGameBoardState)) {
-                        setGameState(GameState.Win);
+                        gameBoardDispatch({type: 'SET_GAME_STATE', payload: GameState.Win})
                     }
                 }        
     
@@ -51,31 +41,19 @@ const GameBoard: React.FC = () => {
                 tempCell.isFlagged = !tempCell.isFlagged;
             }
     
-            setGameBoardState(tempGameBoardState);
+            gameBoardDispatch({type: 'SET_GAME_BOARD_STATE', payload: tempGameBoardState})
 
         }
         
-    }, [gameBoardState, setGameBoardState, gameState, setGameState, UIDispatch]);
+    }, [gameBoardState, gameState, gameBoardDispatch]);
     
     const handleCreateNewGame = (): void => {
-        setGameBoardState(createGameBoardState(width, height, mines));
-        setGameState(GameState.Playing);
-    }
-
-    let header: string;
-    switch(gameState) {
-        case GameState.Lose: 
-            header = "You Lose!"
-            break;
-        case GameState.Win:
-            header = "You Win!"
-            break;
-        default: header = "Minesweeper"
+        gameBoardDispatch({type: 'CREATE_NEW_GAME_BOARD'})
     }
 
     return (
         <>
-        <h1>{header}</h1>
+        <h1>{headerText}</h1>
         <Styled.Container>
             <ControlsBar handleCreateNewGame={handleCreateNewGame}/>
             
