@@ -68,6 +68,7 @@ const gameBoardReducer = (state: GameBoardState = initialgameBoardState, action:
             let tempCells = _.cloneDeep(state.cells);
             let tempCell = tempCells[action.payload.x][action.payload.y];
             let tempGameState = state.gameState;
+            let tempUnflaggedMines = state.unflaggedMines;
 
             if(tempGameState === GameState.Start) {
                 tempGameState = GameState.Playing;
@@ -99,10 +100,19 @@ const gameBoardReducer = (state: GameBoardState = initialgameBoardState, action:
                     }
                 }  
             }
+
+            tempCells.forEach(row => row.forEach(cell => {
+                if(cell.isFlagged && cell.isVisible) {
+                    cell.isFlagged = false;
+                    tempUnflaggedMines++;
+                }
+            }))
+
             return {
                 ...state,
                 cells: tempCells,
                 gameState: tempGameState,
+                unflaggedMines: tempUnflaggedMines,
             }
         }
 
@@ -111,6 +121,10 @@ const gameBoardReducer = (state: GameBoardState = initialgameBoardState, action:
             let tempCell = tempCells[action.payload.x][action.payload.y]
             let tempGameState = state.gameState;
             let tempUnflaggedMines = state.unflaggedMines;
+
+            if(tempCell.isVisible) {
+                return {...state};
+            }
 
             if(tempGameState === GameState.Start) {
                 tempGameState = GameState.Playing;
