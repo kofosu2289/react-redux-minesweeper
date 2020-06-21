@@ -11,7 +11,7 @@ export type Theme = {
 }
 
 export const theme: Theme = {
-  primary: "#4A4960",
+  primary: "#537D8D",
   secondary: "#3472E5",
   highlight: "#1BE7FF",
   warn: "#D96C59",

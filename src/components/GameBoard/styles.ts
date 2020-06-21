@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
 import { Cell } from '../../utils';
 import { Theme } from '../../styles/theme';
+import tinygradient from 'tinygradient';
+import tinycolor from 'tinycolor2';
 
 const cellWidth: number = 35;
 
@@ -16,9 +18,10 @@ const GameBoard = styled.div(({width, height, theme}: GameBoardProps) => css`
     width: ${width * cellWidth}px;
     height: ${height * cellWidth}px;
     margin: 0 auto;
-    border: 1px solid ${theme.dark};
+    border: 1px solid ${theme.darkGrey};
     padding: 20px;
     background: ${theme.grey};
+    box-shadow: inset 1px 1px 1px ${theme.light}, inset -1px -1px 0px ${theme.dark};
 `);
 
 type CellSquareProps = {
@@ -31,7 +34,15 @@ const CellSquare = styled.div(({ cell, theme }: CellSquareProps) => {
     if(cell.isVisible) background = theme.lightGrey
     if(cell.isVisible && cell.hasMine) background = theme.warn;
 
+    const gradient = tinygradient(tinycolor(theme.primary), tinycolor(theme.warn));
+    const colors: tinycolor.Instance[] = gradient.rgb(7);
+    let color: string = theme.dark;
+    if(cell.neighborMines > 0) {
+        color = colors[cell.neighborMines - 1].toHexString()
+    }
+
     return css`
+    color: ${color};
     display: flex;
     background: ${background};
     justify-content: center;
@@ -76,11 +87,20 @@ const Button = styled.button(({ theme }: ButtonProps) => css`
     }
 `);
 
-const Container = styled.div`
+type ContainerProps = {
+    theme: Theme,
+}
+
+const Container = styled.div(({ theme }: ContainerProps) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
-`;
+
+    h1 {
+        margin-top: 20px;
+        color: ${theme.warn};
+    }
+`);
 
 export const Styled = { 
     GameBoard,

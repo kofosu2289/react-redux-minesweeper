@@ -17,7 +17,8 @@ const GameBoard: React.FC = () => {
         mines: 10,
     });
   
-  console.log(setGameDetails);
+    // just to temporarily remove unused variable warning
+    console.log(setGameDetails);
 
     const { width, height, mines } = gameDetails;
     const [gameBoardState, setGameBoardState] = useState<Cell[][]>(createGameBoardState(width, height, mines));
