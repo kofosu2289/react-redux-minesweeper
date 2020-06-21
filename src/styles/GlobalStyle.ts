@@ -11,11 +11,16 @@ export default createGlobalStyle`
     }
 
     html {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         height: 100vh;
         background: radial-gradient(${theme.primary}, ${theme.dark} 80%);
     }
 
     h1 {
         text-align: center;
+        color: ${theme.warn};
+        margin-top: 20px;
     }
 `;

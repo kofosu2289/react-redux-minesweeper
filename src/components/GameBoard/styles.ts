@@ -4,24 +4,21 @@ import { Theme } from '../../styles/theme';
 import tinygradient from 'tinygradient';
 import tinycolor from 'tinycolor2';
 
-const cellWidth: number = 35;
+const cellWidth: number = 30;
 
 type GameBoardProps = {
     width: number;
     height: number;
     theme: Theme;
 }
+
 const GameBoard = styled.div(({width, height, theme}: GameBoardProps) => css`
     display: grid;
     grid-template-columns: repeat(${width}, 1fr);
     grid-template-rows: repeat(${height}, 1fr);
     width: ${width * cellWidth}px;
     height: ${height * cellWidth}px;
-    margin: 0 auto;
-    border: 1px solid ${theme.darkGrey};
-    padding: 20px;
-    background: ${theme.grey};
-    box-shadow: inset 1px 1px 1px ${theme.light}, inset -1px -1px 0px ${theme.dark};
+    margin: 0 auto;  
 `);
 
 type CellSquareProps = {
@@ -69,7 +66,7 @@ type ButtonProps = {
 }
 
 const Button = styled.button(({ theme }: ButtonProps) => css`
-    margin: 10px;
+    margin-bottom: 10px;
     border: 1px solid ${theme.darkGrey};
     border-radius: 0;
     padding: 5px 10px;
@@ -92,14 +89,27 @@ type ContainerProps = {
 }
 
 const Container = styled.div(({ theme }: ContainerProps) => css`
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: ${theme.grey};
+    padding: 20px;
+    box-shadow: inset 1px 1px 1px ${theme.light}, inset -1px -1px 0px ${theme.dark};
+    border: 2px solid ${theme.primary};
 
     h1 {
-        margin-top: 20px;
         color: ${theme.warn};
     }
+`);
+
+type ControlsBarProps = {
+    theme: Theme,
+}
+
+const ControlsBar = styled.div(({ theme }: ControlsBarProps) => css`
+    display: flex;
+    justify-content: center;
 `);
 
 export const Styled = { 
@@ -107,4 +117,5 @@ export const Styled = {
     CellSquare, 
     Button,
     Container,
+    ControlsBar,
 }

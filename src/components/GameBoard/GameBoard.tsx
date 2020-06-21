@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Styled } from './styles';
 import CellSquare from './CellSquare';
+import ControlsBar from './ControlsBar';
 import { Cell, createGameBoardState, showNeighbors, isWinConditionMet, revealGameBoard } from '../../utils';
 import _ from 'lodash';
 
@@ -16,7 +17,7 @@ const GameBoard: React.FC = () => {
         height: 10,
         mines: 10,
     });
-  
+
     // just to temporarily remove unused variable warning
     console.log(setGameDetails);
 
@@ -75,9 +76,11 @@ const GameBoard: React.FC = () => {
     }
 
     return (
+        <>
+        <h1>{header}</h1>
         <Styled.Container>
-            <h1>{header}</h1>
-            <Styled.Button onClick={handleCreateNewGame}>new game</Styled.Button>
+            <ControlsBar handleCreateNewGame={handleCreateNewGame}/>
+            
             <Styled.GameBoard width={width} height={height}>
                 {gameBoardState.map((row: Cell[]) => 
                     row.map((cell: Cell) => 
@@ -91,7 +94,8 @@ const GameBoard: React.FC = () => {
                 }
             </Styled.GameBoard>
         </Styled.Container>
+        </>
     )
 }
 
-export default React.memo(GameBoard);
+export default GameBoard;
