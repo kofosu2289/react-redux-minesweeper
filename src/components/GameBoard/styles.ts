@@ -72,7 +72,7 @@ const Button = styled.button(({ theme }: ButtonProps) => css`
     padding: 5px 10px;
     background: ${theme.grey};
     box-shadow: inset 1px 1px 1px ${theme.light}, inset -1px -1px 0px ${theme.dark};
-    color: ${theme.dark};
+    color: ${theme.primary};
 
     &:focus {
         outline: none;
