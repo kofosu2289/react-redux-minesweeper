@@ -1,32 +1,30 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, Dispatch } from 'react'
 import { Styled } from './styles';
 import CellSquare from './CellSquare';
 import ControlsBar from './ControlsBar';
 import { Cell, createGameBoardState, showNeighbors, isWinConditionMet, revealGameBoard } from '../../utils';
 import _ from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
+import { UIActions } from '../../redux/actions/UIActions';
+import { AppState } from '../../redux/reducers/rootReducer';
 
 enum GameState {
+    Start,
     Win,
     Lose,
     Playing
 }
 
 const GameBoard: React.FC = () => {
-    const [gameDetails, setGameDetails] = useState({
-        width: 10,
-        height: 10,
-        mines: 10,
-    });
+    const { width, height, mines } = useSelector((state: AppState) => state.gameBoard)
 
-    // just to temporarily remove unused variable warning
-    console.log(setGameDetails);
-
-    const { width, height, mines } = gameDetails;
     const [gameBoardState, setGameBoardState] = useState<Cell[][]>(createGameBoardState(width, height, mines));
     const [gameState, setGameState] = useState<GameState>(GameState.Playing);
+    const UIDispatch = useDispatch<Dispatch<UIActions>>();
 
     const handleClickCellSquare = useCallback((e: React.MouseEvent<HTMLDivElement>, cell: Cell) => {
         e.preventDefault();
+        UIDispatch({ type: 'TEST', payload: 'it works!'})
         if(gameState === GameState.Playing) {
             let tempGameBoardState = _.cloneDeep(gameBoardState);
             let tempCell: Cell = tempGameBoardState[cell.x][cell.y];
@@ -57,7 +55,7 @@ const GameBoard: React.FC = () => {
 
         }
         
-    }, [gameBoardState, setGameBoardState, gameState, setGameState]);
+    }, [gameBoardState, setGameBoardState, gameState, setGameState, UIDispatch]);
     
     const handleCreateNewGame = (): void => {
         setGameBoardState(createGameBoardState(width, height, mines));
