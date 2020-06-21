@@ -17,12 +17,18 @@ interface ISetGameBoardStateAction {
 
 interface ILeftClickCellAction {
     readonly type: "LEFT_CLICK_CELL",
-    payload: Cell;
+    payload: { 
+        x: number,
+        y: number,
+    };
 }
 
 interface IRightClickCellAction {
     readonly type: "RIGHT_CLICK_CELL",
-    payload: Cell;
+    payload: {
+        x: number,
+        y: number,
+    };
 }
 
 export type GameBoardActions =

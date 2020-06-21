@@ -17,4 +17,4 @@ const ControlsBar: React.FC = () => {
     )
 }
 
-export default ControlsBar
+export default React.memo(ControlsBar)
