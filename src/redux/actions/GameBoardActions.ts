@@ -15,7 +15,19 @@ interface ISetGameBoardStateAction {
     payload: Cell[][];
 }
 
+interface ILeftClickCellAction {
+    readonly type: "LEFT_CLICK_CELL",
+    payload: Cell;
+}
+
+interface IRightClickCellAction {
+    readonly type: "RIGHT_CLICK_CELL",
+    payload: Cell;
+}
+
 export type GameBoardActions =
 | ICreateNewGameBoardAction
 | ISetGameStateAction
 | ISetGameBoardStateAction
+| ILeftClickCellAction
+| IRightClickCellAction

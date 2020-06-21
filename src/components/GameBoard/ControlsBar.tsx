@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { Styled } from './styles';
+import { useDispatch } from 'react-redux';
+import { GameBoardActions } from '../../redux/actions/GameBoardActions';
 
-type ControlsBarProps = {
-    handleCreateNewGame: Function;
-}
+const ControlsBar: React.FC = () => {
+    const gameBoardDispatch = useDispatch<Dispatch<GameBoardActions>>();
 
-const ControlsBar: React.FC<ControlsBarProps> = ({ handleCreateNewGame }) => {
+    const handleCreateNewGame = () => {
+        gameBoardDispatch({type: 'CREATE_NEW_GAME_BOARD'})
+    }
+    
     return (
         <Styled.ControlsBar>            
             <Styled.Button onClick={() => handleCreateNewGame()}>new game</Styled.Button> 
