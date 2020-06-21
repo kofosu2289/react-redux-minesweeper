@@ -1,68 +1,94 @@
 import React, { useState, useCallback } from 'react'
 import { Styled } from './styles';
 import CellSquare from './CellSquare';
-import { Cell, createGameState, getNeighbors } from '../../utils';
+import { Cell, createGameBoardState, showNeighbors, isWinConditionMet, revealGameBoard } from '../../utils';
 import _ from 'lodash';
 
-type GameBoardProps = { 
-  width: number,
-  height: number,
-  mines: number
+enum GameState {
+    Win,
+    Lose,
+    Playing
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({width, height, mines}) => {
-  const [gameState, setGameState] = useState<Cell[][]>(createGameState(width, height, mines));
+const GameBoard: React.FC = () => {
+    const [gameDetails, setGameDetails] = useState({
+        width: 10,
+        height: 10,
+        mines: 10,
+    });
 
-  const handleClickCellSquare = useCallback((cell: Cell) => {
-    let tempGameState = _.cloneDeep(gameState);
+    const { width, height, mines } = gameDetails;
+    const [gameBoardState, setGameBoardState] = useState<Cell[][]>(createGameBoardState(width, height, mines));
+    const [gameState, setGameState] = useState<GameState>(GameState.Playing);
 
-    // set clicked CellSquare to visible
-    tempGameState[cell.x][cell.y].isVisible = true;
+    const handleClickCellSquare = useCallback((e: React.MouseEvent<HTMLDivElement>, cell: Cell) => {
+        e.preventDefault();
+        if(gameState === GameState.Playing) {
+            let tempGameBoardState = _.cloneDeep(gameBoardState);
+            let tempCell: Cell = tempGameBoardState[cell.x][cell.y];
 
-    const showNeighbors = (gameState: Cell[][], cell: Cell) => {
-      const neighborsArr: Cell[] = getNeighbors(gameState, cell)
+            // handle left click
+            if(e.type === "click" && !tempCell.isFlagged) {
+        
+                tempCell.isVisible = true;
+
+                if(tempCell.hasMine) {
+                    revealGameBoard(tempGameBoardState);
+                    setGameState(GameState.Lose);
+                } 
+                else {
+                    showNeighbors(tempGameBoardState, cell); 
+
+                    if(isWinConditionMet(tempGameBoardState)) {
+                        setGameState(GameState.Win);
+                    }
+                }        
     
-      // check if any neighbors have a mine
-      let nearbyMine = false;
+            // handle right click
+            } else if(e.type === "contextmenu") {   
+                tempCell.isFlagged = !tempCell.isFlagged;
+            }
     
-      neighborsArr.forEach(neighbor => {
-        if(neighbor.hasMine) nearbyMine = true;
-      })
-            
-      // TODO: set to visible all neighbor cells that dont have mines
-      if(!nearbyMine) {
-        neighborsArr.forEach(neighbor => {
-          if(neighbor.neighborMines === 0 && !neighbor.isVisible && !neighbor.hasMine) {
-            neighbor.isVisible = true;
-            showNeighbors(gameState, neighbor)
-          }
-          else if (!neighbor.hasMine && !neighbor.isVisible) {
-            neighbor.isVisible = true;
-          }
-                   
-        })
-      }
+            setGameBoardState(tempGameBoardState);
 
+        }
+        
+    }, [gameBoardState, setGameBoardState, gameState, setGameState]);
+    
+    const handleCreateNewGame = (): void => {
+        setGameBoardState(createGameBoardState(width, height, mines));
+        setGameState(GameState.Playing);
     }
 
-    showNeighbors(tempGameState, cell)
+    let header: string;
+    switch(gameState) {
+        case GameState.Lose: 
+            header = "You Lose!"
+            break;
+        case GameState.Win:
+            header = "You Win!"
+            break;
+        default: header = "Minesweeper"
+    }
 
-    setGameState(tempGameState);
-  }, [gameState, setGameState]);
-    
-  return (
-    <Styled.GameBoard width={width} height={height}>
-      {gameState.map((row: Cell[]) => 
-        row.map((cell: Cell) => 
-          <CellSquare 
-            key={`(${cell.x},${cell.y})`}                       
-            cell={cell}  
-            handleClickCellSquare={handleClickCellSquare}         
-          />
-        )
-      )}
-    </Styled.GameBoard>
-  )
+    return (
+        <Styled.Container>
+            <h1>{header}</h1>
+            <Styled.Button onClick={handleCreateNewGame}>new game</Styled.Button>
+            <Styled.GameBoard width={width} height={height}>
+                {gameBoardState.map((row: Cell[]) => 
+                    row.map((cell: Cell) => 
+                        <CellSquare 
+                            key={`(${cell.x},${cell.y})`}                       
+                            cell={cell}  
+                            handleClickCellSquare={handleClickCellSquare}         
+                        />
+                        )
+                    )
+                }
+            </Styled.GameBoard>
+        </Styled.Container>
+    )
 }
 
-export default GameBoard
+export default React.memo(GameBoard);
