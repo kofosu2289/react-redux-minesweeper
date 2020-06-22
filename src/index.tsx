@@ -6,6 +6,7 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from './styles/theme';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
+import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -18,3 +19,5 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById('root')
 );
+
+serviceWorker.register();
